@@ -14,7 +14,7 @@ class LiftCar(
 
   private var doorState = DoorState.CLOSED
   private var state = LiftState.STOPPED
-  private var direction = Direction.UNKOWN
+  private var direction = Direction.UNKNOWN
   private val requestMap: Array<MutableList<LiftRequest>> = Array(floors){ mutableListOf<LiftRequest>()}
   val buttonsGrid = arrayListOf<LiftButton>()
 
@@ -41,7 +41,7 @@ class LiftCar(
         // case I, the lift is at rest and serving no request
         // set the direction, in the direction of the request, if on the same floor
         // else
-        if (state == LiftState.STOPPED && direction == Direction.UNKOWN) {
+        if (state == LiftState.STOPPED && direction == Direction.UNKNOWN) {
           if (position == request.floor * 10) {
             direction = request.direction
           } else {
@@ -100,11 +100,11 @@ class LiftCar(
   }
 
   /**
-   * @return {@link Direction.UNKOWN} if the lift is at the edge, it was going to
+   * @return {@link Direction.UNKNOWN} if the lift is at the edge, it was going to
    */
   private fun getNewDirection() = when (direction) {
-    Direction.UP -> if (tu * 10 == position) Direction.UNKOWN else direction
-    Direction.DOWN -> if (tl * 10 == position) Direction.UNKOWN else direction
+    Direction.UP -> if (tu * 10 == position) Direction.UNKNOWN else direction
+    Direction.DOWN -> if (tl * 10 == position) Direction.UNKNOWN else direction
     else -> throw IllegalStateException("Direction can't be unkown when getting a new direction")
   }
 
@@ -134,7 +134,7 @@ class LiftCar(
    */
   private fun tryStartMoving() : Boolean {
     // If the direction is known, then start moving in that direction
-    if (direction != Direction.UNKOWN) {
+    if (direction != Direction.UNKNOWN) {
       invalidateEdge(direction)
       startMoving(direction)
       return true
@@ -154,7 +154,7 @@ class LiftCar(
   }
 
   private fun startMoving(direction: Direction) {
-    if (direction == Direction.UNKOWN) {
+    if (direction == Direction.UNKNOWN) {
       throw IllegalArgumentException("Cannot move to unkown direction")
     }
     this.state = LiftState.MOVING
@@ -165,7 +165,7 @@ class LiftCar(
   private fun getDirectionOfFloor(floor: Int) = when {
     floor * 10 < position -> Direction.DOWN
     floor * 10 > position -> Direction.UP
-    else ->  Direction.UNKOWN
+    else ->  Direction.UNKNOWN
   }
 
 

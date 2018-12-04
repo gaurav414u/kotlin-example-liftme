@@ -1,6 +1,6 @@
 package com.example.liftmelib
 
-enum class Direction {UP, DOWN, UNKOWN}
+enum class Direction {UP, DOWN, UNKNOWN}
 
 /**
  * LiftController implementation
@@ -38,7 +38,7 @@ class LiftController private constructor(
   }
 
   /**
-   * Ticks every elevator
+   * Ticks all the components
    */
   override fun tick() {
     this.liftCars[0].tick()
