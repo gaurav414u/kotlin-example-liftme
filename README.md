@@ -16,7 +16,7 @@ A scratch kotlin app which simulates a Lift system using Kotlin
 
 ### Details
 
-### LiftController
+#### LiftController
 Initialises LiftCars and RequestHandler and takes care of the tick of the system.
 
 #### LiftCar
@@ -30,6 +30,6 @@ interface ILiftCar {
 ```
 `RequestHandler` assigns the request to a lift using `takeRequest()`.
 
-### RequestHandler
+#### RequestHandler
 
 There can be many types of RequestHandler, for now we have SimpleRequestHandler which assigns every request to the first LiftCar.
