@@ -34,64 +34,64 @@ class LiftCar : ILiftCar {
     }
   }
 
-
+  @Synchronized
   override fun takeRequest(request: LiftRequest) {
-    synchronized(this) {
-      requestMap[request.floor].add(request)
+    requestMap[request.floor].add(request)
 
-      if (request is EnterRequest) {
-        // case I, the lift is at rest and serving no request
-        // set the direction, in the direction of the request, if on the same floor
-        // else
-        if (state == LiftState.STOPPED && direction == Direction.UNKNOWN) {
-          if (position == request.floor * 10) {
-            direction = request.direction
-          } else {
-            direction = getDirectionOfFloor(request.floor)
-          }
+    if (request is EnterRequest) {
+      // case I, the lift is at rest and serving no request
+      // set the direction, in the direction of the request, if on the same floor
+      // else
+      if (state == LiftState.STOPPED && direction == Direction.UNKNOWN) {
+        if (position == request.floor * 10) {
+          direction = request.direction
+        } else {
+          direction = getDirectionOfFloor(request.floor)
         }
       }
+    }
 
-      // Modify edges, whenever new request comes in
-      if (request.floor > tu) {
-        tu = request.floor
-      } else if (request.floor < tl) {
-        tl = request.floor
-      }
+    // Modify edges, whenever new request comes in
+    if (request.floor > tu) {
+      tu = request.floor
+    } else if (request.floor < tl) {
+      tl = request.floor
     }
   }
 
+  @Synchronized
   override fun tick() {
-    synchronized(this) {
-      if (state == LiftState.MOVING) {
-        if (direction == Direction.UP) {
-          this.position += 1
-        }
-        if (direction == Direction.DOWN) {
-          this.position -= 1
-        }
-        if (needToBeStopped()) {
-          stopLiftAndMarkRequests()
-          System.out.println("door open")
-          doorState = DoorState.OPEN
-          // Get new direction
-          this.direction = getNewDirection()
-        }
+    if (state == LiftState.MOVING) {
+      if (direction == Direction.UP) {
+        this.position += 1
       }
+      if (direction == Direction.DOWN) {
+        this.position -= 1
+      }
+      if (needToBeStopped()) {
+        stopLiftAndMarkRequests()
+        System.out.println("door open")
+        doorState = DoorState.OPEN
+        // Get new direction
+        this.direction = getNewDirectionWhenStopped()
+      }
+    }
 
-      System.out.println("Lift at $position")
+    System.out.println("Lift at $position")
 
-      if (state == LiftState.STOPPED) {
-        stopTime -= 1
-        if (stopTime <= 0) {
-          // Keep retrying if can't start moving
-          if (!tryStartMoving()) {
-            stopTime = 1
-          } else {
-            // State moving
-            doorState = DoorState.CLOSED
-            System.out.println("door closed")
-          }
+    if (state == LiftState.STOPPED) {
+      stopTime -= 1
+      if (stopTime <= 0) {
+        // Keep retrying if can't start moving
+        val newDirection = getDirection()
+        if (newDirection == Direction.UNKNOWN) {
+          stopTime = 1
+        } else {
+          // Start moving
+          invalidateEdge(newDirection)
+          startMoving(newDirection)
+          doorState = DoorState.CLOSED
+          System.out.println("door closed")
         }
       }
     }
@@ -102,9 +102,10 @@ class LiftCar : ILiftCar {
   }
 
   /**
+   * Assumes that the LiftCar is stopped right now
    * @return {@link Direction.UNKNOWN} if the lift is at the edge, it was going to
    */
-  private fun getNewDirection() = when (direction) {
+  private fun getNewDirectionWhenStopped() = when (direction) {
     Direction.UP -> if (tu * 10 == position) Direction.UNKNOWN else direction
     Direction.DOWN -> if (tl * 10 == position) Direction.UNKNOWN else direction
     else -> throw IllegalStateException("Direction can't be unkown when getting a new direction")
@@ -134,25 +135,20 @@ class LiftCar : ILiftCar {
    *  else will pick a target floor and move towards it
    * @return true if started moving else false
    */
-  private fun tryStartMoving() : Boolean {
+  private fun getDirection() : Direction {
     // If the direction is known, then start moving in that direction
     if (direction != Direction.UNKNOWN) {
-      invalidateEdge(direction)
-      startMoving(direction)
-      return true
+      return direction
     }
 
     // The direction is unkown
     // Select a request to be processed and calculate the direction
     for (floor in floors-1 downTo 0) {
       if (requestMap[floor].size > 0) {
-        val floorDirection = getDirectionOfFloor(floor)
-        invalidateEdge(floorDirection)
-        startMoving(floorDirection)
-        return true
+        return getDirectionOfFloor(floor)
       }
     }
-    return false
+    return Direction.UNKNOWN
   }
 
   private fun startMoving(direction: Direction) {
@@ -209,5 +205,4 @@ class LiftCar : ILiftCar {
     }
     return false
   }
-
 }
