@@ -22,6 +22,7 @@ class LiftController private constructor(
 
   /**
    * Builder to create {@link LiftController}
+   * @param floors
    */
   class Builder(private val floors: Int) {
     private val liftCars: MutableList<LiftCar> = mutableListOf()

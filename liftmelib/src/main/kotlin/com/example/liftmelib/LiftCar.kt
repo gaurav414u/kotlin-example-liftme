@@ -6,24 +6,25 @@ import java.lang.IllegalStateException
 enum class LiftState {MOVING,STOPPED }
 enum class DoorState {CLOSED,OPEN,CLOSING,OPENING }
 
-class LiftCar(
-  val floors : Int,
-  private var requestHandler : RequestHandler,
-  private var position: Int = 0
-) : ILiftCar {
-
+class LiftCar : ILiftCar {
+  val buttonsGrid: ArrayList<LiftButton>
+  private val floors: Int
+  private var requestHandler: RequestHandler
+  private var position: Int
   private var doorState = DoorState.CLOSED
   private var state = LiftState.STOPPED
   private var direction = Direction.UNKNOWN
-  private val requestMap: Array<MutableList<LiftRequest>> = Array(floors){ mutableListOf<LiftRequest>()}
-  val buttonsGrid = arrayListOf<LiftButton>()
-
+  private val requestMap: Array<MutableList<LiftRequest>>
   private var tl: Int = 0  /** target lower */
   private var tu: Int = 0  /** target upper */
-
   private var stopTime = 5
 
-  init {
+  constructor(floors: Int, requestHandler: RequestHandler, position: Int = 0) {
+    this.floors = floors
+    this.requestHandler = requestHandler
+    this.position = position
+    this.requestMap = Array(floors) { mutableListOf<LiftRequest>() }
+    this.buttonsGrid = arrayListOf<LiftButton>()
     for (i in 0 until this.floors) {
       val newButton = LiftButton(i, this.requestHandler)
       buttonsGrid.add(newButton)
@@ -32,6 +33,7 @@ class LiftCar(
       requestMap[i] = mutableListOf()
     }
   }
+
 
   override fun takeRequest(request: LiftRequest) {
     synchronized(this) {
@@ -77,7 +79,7 @@ class LiftCar(
         }
       }
 
-      System.out.println("Lift at ${position}")
+      System.out.println("Lift at $position")
 
       if (state == LiftState.STOPPED) {
         stopTime -= 1
