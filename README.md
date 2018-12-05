@@ -100,7 +100,7 @@ class FloorButton(floor: Int, private val direction: Direction, requestHandler: 
 ## LiftCar functionality
 `LiftCar` maintains 2 floor numbers `tl` and `tu` which are the lower and upper targets(floors) for that LiftCar which change on the basis of current Requests that the LiftCar is processing.
 
-### Understanding `takeRequest()`
+### `takeRequest()` [[link](https://github.com/gaurav414u/kotlin-example-liftme/blob/master/liftmelib/src/main/kotlin/com/example/liftmelib/LiftCar.kt#L38)]
 1. Add the request to the requestMap
 
 // TODO
@@ -110,7 +110,7 @@ class FloorButton(floor: Int, private val direction: Direction, requestHandler: 
 //3. Modify the `tl` and `tu`
 
 
-### Understanding `tick()`
+### `tick()` [[link](https://github.com/gaurav414u/kotlin-example-liftme/blob/master/liftmelib/src/main/kotlin/com/example/liftmelib/LiftCar.kt#L63)]
 - If the direction is `UP` do `position += 1`
 - If the direction is `DOWN` do `position -= 1`
 - If needsToBeStopped()
