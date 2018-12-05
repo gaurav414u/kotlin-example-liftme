@@ -55,7 +55,7 @@ enum class RequestState {INITIATED, COMPLETED}
 #### Factory Method Pattern in Request creation
 `Button` uses a factory method pattern to create a `LiftRequest`.
 
-```
+```kotlin
 abstract class Button(
   val floor: Int,
   private var requestHandler: RequestHandler,
