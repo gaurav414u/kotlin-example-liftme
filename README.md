@@ -28,8 +28,10 @@ interface ILiftCar {
   fun getCurrentFloor() : Float
 }
 ```
-- LiftCar takes care of processing the request using takeRequest() which gets called by a higher order container, which in our case is `LiftController` whenever a `LiftRequest` is raised.
-- LiftCar initialises the array of floor buttons to be used in that LiftCar.
+- Takes care of processing the request using takeRequest() which gets called by a higher order container, which in our case is `LiftController` whenever a `LiftRequest` is raised.
+- Initialises the array of floor buttons to be used in that LiftCar.
+- Handles the tick of the system
+
 
 
 #### RequestHandler
@@ -94,3 +96,30 @@ class FloorButton(floor: Int, private val direction: Direction, requestHandler: 
   }
 }
 ```
+
+## LiftCar functionality
+`LiftCar` maintains 2 floor numbers `tl` and `tu` which are the lower and upper targets(floors) for that LiftCar which change on the basis of current Requests that the LiftCar is processing.
+
+### Understanding `takeRequest()`
+1. Add the request to the requestMap
+
+// TODO
+//2. (Only EnterRequest)Decide the direction if the lift is STOPPED and the direction is not known. (only EnterRequest)
+//    1. If the lift is at the same floor of this new request; the request direction
+//    2.
+//3. Modify the `tl` and `tu`
+
+
+### Understanding `tick()`
+- If the direction is `UP` do `position += 1`
+- If the direction is `DOWN` do `position -= 1`
+- If needsToBeStopped()
+    - If the lift is at a bound (tl or tu)
+    - If any of the ExitRequest is for the current floor
+    - If any of the EnterRequest is for the current floor and is for the same direction in which the lift is flowing
+    then, stop the lift and mark the requests ending here as completed
+- If STOPPED
+    - Wait for some time and then try to getDirection using any pending requests
+    - If the direction is found, start moving as keep trying to getDirection
+
+
