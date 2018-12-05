@@ -113,11 +113,11 @@ class FloorButton(floor: Int, private val direction: Direction, requestHandler: 
 ### `tick()` [[link](https://github.com/gaurav414u/kotlin-example-liftme/blob/master/liftmelib/src/main/kotlin/com/example/liftmelib/LiftCar.kt#L63)]
 - If the direction is `UP` do `position += 1`
 - If the direction is `DOWN` do `position -= 1`
-- If needsToBeStopped()
+- If needsToBeStopped(); stop the lift and mark the requests ending here as completed. Stop when:
     - If the lift is at a bound (tl or tu)
     - If any of the ExitRequest is for the current floor
     - If any of the EnterRequest is for the current floor and is for the same direction in which the lift is flowing
-    then, stop the lift and mark the requests ending here as completed
+
 - If STOPPED
     - Wait for some time and then try to getDirection using any pending requests
     - If the direction is found, start moving as keep trying to getDirection
